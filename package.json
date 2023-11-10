@@ -1,0 +1,26 @@
+{
+  "name": "junior-hackathon-49",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "eslint": "^8.53.0",
+    "eslint-config-prettier": "9.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.0.2",
+    "prettier": "3.0.3",
+    "vite": "^4.4.5"
+  },
+  "lint-staged":{
+    "**/*.{js, css, scss}":[
+      "npx prettier --write",
+      "npx eslint --fix"
+    ]
+  }
+}
