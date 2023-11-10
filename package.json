@@ -28,5 +28,6 @@
       "stylelint --fix",
       "prettier --write"
     ]
-  }
+  },
+  "homepage": "https://aibina.github.io/junior-hackathon-49/"
 }
