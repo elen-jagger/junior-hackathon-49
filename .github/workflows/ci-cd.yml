@@ -2,7 +2,7 @@ name: DevOps-GitHibActions
 on: 
   push:
     branches:
-      - deploy
+      - dev
 jobs:
   # Build Job
   build:
