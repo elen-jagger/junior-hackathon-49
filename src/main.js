@@ -10,6 +10,9 @@ const config = {
   width: 1200,
   height: 720,
   scene: [BootScene, PreloadScene, StartScene, GameScene],
+  physics: {
+    default: 'arcade',
+  },
 };
 
 export default new Phaser.Game(config);

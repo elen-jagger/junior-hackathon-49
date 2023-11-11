@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 
+//пока не использовать? должно наследоваться от Phaser.Physics.Arcade.Sprite, в конструкторе получать scene
 class Sprite extends Phaser.Scene {
   constructor() {
     super('Sprite');
