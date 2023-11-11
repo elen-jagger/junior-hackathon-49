@@ -1,5 +1,7 @@
 import Phaser from 'phaser';
 import generateMaze from '../helpers/generate-maze';
+import grass from '../assets/textures/grassTile.png';
+import ground from '../assets/textures/groundTile.png';
 
 class GameScene extends Phaser.Scene {
   constructor() {
@@ -7,8 +9,8 @@ class GameScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('grass', 'src/assets/textures/grass.png');
-    this.load.image('ground', 'src/assets/textures/ground.png');
+    this.load.image('ground', ground);
+    this.load.image('grass', grass);
 
     this.load.spritesheet('cat', 'assets/cat.png', {
       frameWidth: 29.2,
