@@ -1,4 +1,4 @@
-name: DevOps-GitHibActions
+name: deploy-to-gh-pages
 on: 
   push:
     branches:
@@ -25,9 +25,7 @@ jobs:
           path: ./dist
   # Deploy Job
   deploy:
-    # Add a dependency to the build job
     needs: build
-    # Specify runner + deployment step
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact
