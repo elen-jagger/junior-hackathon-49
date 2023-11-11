@@ -1,17 +1,14 @@
 import Phaser from 'phaser';
-import Maze from './maze';
+import BootScene from './scenes/BootScene';
+import StartScene from './scenes/StartScene';
+import PreloadScene from './scenes/PreloadScene';
+import GameScene from './scenes/GameScene';
 
 const config = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
-  scene: Maze,
-  physics: {
-    default: 'arcade',
-    arcade: {
-      gravity: { y: 100 },
-    },
-  },
+  width: 1200,
+  height: 720,
+  scene: [BootScene, PreloadScene, StartScene, GameScene],
 };
 
 export default new Phaser.Game(config);
