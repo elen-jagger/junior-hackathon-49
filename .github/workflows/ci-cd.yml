@@ -1,4 +1,4 @@
-name: deploy-to-gh-pages
+name: deploy-build-to-gh-pages
 on: 
   push:
     branches:
