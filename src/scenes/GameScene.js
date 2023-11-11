@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import generateMaze from '../helpers/generate-maze';
 import grass from '../assets/textures/grassTile.png';
 import ground from '../assets/textures/groundTile.png';
+import kitten from '../assets/kitten.png';
 
 class GameScene extends Phaser.Scene {
   constructor() {
@@ -11,6 +12,7 @@ class GameScene extends Phaser.Scene {
   preload() {
     this.load.image('ground', ground);
     this.load.image('grass', grass);
+    this.load.image('kitten', kitten);
 
     this.load.spritesheet('cat', 'assets/cat.png', {
       frameWidth: 29.2,
@@ -45,6 +47,10 @@ class GameScene extends Phaser.Scene {
       frameRate: 10,
       repeat: -1,
     });
+  }
+
+  addFinish() {
+    this.physics.add.image(1065, 585, 'kitten');
   }
 
   update() {
@@ -93,6 +99,7 @@ class GameScene extends Phaser.Scene {
     const tiles = this._cellsToTiles(mazeCells);
 
     this._renderLabyrinth(tiles, width, height, x, y);
+    this.addFinish();
   }
 
   _renderLabyrinth(tiles, width, height, x, y) {
