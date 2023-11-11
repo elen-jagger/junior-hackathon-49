@@ -5,12 +5,13 @@ class EndScene extends Phaser.Scene {
     super('EndScene');
   }
   preload() {
-    console.log('EndScene.preload');
+    this.load.image('popup', 'assets/win-popup.png');
   }
 
   create() {
-    console.log(this.scene);
-    this.scene.start('Preload');
+    const popup = this.add.image(600, 350, 'popup');
+    popup.setInteractive();
+    popup.on('pointerdown', () => this.scene.start('Preload'));
   }
 }
 

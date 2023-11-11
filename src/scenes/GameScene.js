@@ -74,10 +74,9 @@ class GameScene extends Phaser.Scene {
       this.player.anims.play('turn');
     }
 
-    //пока что убрала
-    // if (this.player.x >= 750 && this.player.y >= 550) {
-    //   this.scene.start('EndScreen');
-    // }
+    if (this.player.x >= 1040 && this.player.y >= 560) {
+      this.scene.start('EndScene');
+    }
   }
 
   create() {

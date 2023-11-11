@@ -11,7 +11,7 @@ class StartScene extends Phaser.Scene {
   }
 
   createText() {
-    this.add.text(10, 10, 'Начало игры', { font: '100px', fill: '#FFFFFF' }); //.setOrigin(0, 5) выравнить по центру
+    this.add.text(10, 10, 'Начало игры', { font: '100px', fill: '550721' }); //.setOrigin(0, 5) выравнить по центру
   }
 
   setEvents() {
