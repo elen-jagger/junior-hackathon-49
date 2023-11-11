@@ -29,5 +29,8 @@
       "prettier --write"
     ]
   },
-  "homepage": "https://aibina.github.io/junior-hackathon-49/"
+  "homepage": "https://aibina.github.io/junior-hackathon-49/",
+  "dependencies": {
+    "phaser": "^3.60.0"
+  }
 }
