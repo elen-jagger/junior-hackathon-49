@@ -1,11 +1,11 @@
 import Phaser from 'phaser';
-import HelloWorld from './hello-world';
+import Maze from './maze';
 
 const config = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
-  scene: HelloWorld,
+  scene: Maze,
   physics: {
     default: 'arcade',
     arcade: {
