@@ -1,6 +1,10 @@
 import Phaser from 'phaser';
 
 class Sprite extends Phaser.Scene {
+  constructor() {
+    super('Sprite');
+  }
+
   preload() {
     this.load.spritesheet('cat', 'assets/cat.png', {
       frameWidth: 77,
@@ -38,22 +42,26 @@ class Sprite extends Phaser.Scene {
   update() {
     let cursors = this.input.keyboard.createCursorKeys();
     if (cursors.left.isDown) {
-      this.player.setVelocityX(-160);
+      this.player.setVelocityX(-250);
 
       this.player.anims.play('left', true);
     } else if (cursors.right.isDown) {
-      this.player.setVelocityX(160);
+      this.player.setVelocityX(250);
 
       this.player.anims.play('right', true);
     } else if (cursors.down.isDown) {
-      this.player.setVelocityY(160);
+      this.player.setVelocityY(250);
     } else if (cursors.up.isDown) {
-      this.player.setVelocityY(-160);
+      this.player.setVelocityY(-250);
     } else {
       this.player.setVelocityX(0);
       this.player.setVelocityY(0);
 
       this.player.anims.play('turn');
+    }
+
+    if (this.player.x >= 750 && this.player.y >= 550) {
+      this.scene.start('EndScreen');
     }
   }
 }
