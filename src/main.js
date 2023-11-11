@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+
 import BootScene from './scenes/BootScene';
 import StartScene from './scenes/StartScene';
 import PreloadScene from './scenes/PreloadScene';
@@ -9,6 +10,9 @@ const config = {
   width: 1200,
   height: 720,
   scene: [BootScene, PreloadScene, StartScene, GameScene],
+  physics: {
+    default: 'arcade',
+  },
 };
 
 export default new Phaser.Game(config);

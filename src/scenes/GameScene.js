@@ -11,9 +11,72 @@ class GameScene extends Phaser.Scene {
   preload() {
     this.load.image('ground', ground);
     this.load.image('grass', grass);
+
+    this.load.spritesheet('cat', 'assets/cat.png', {
+      frameWidth: 29.2,
+      frameHeight: 23,
+    });
+  }
+
+  //TODO по-хорошему надо перенести в отдельный класс, наследующий от Phaser.Physics.Arcade.Sprite
+  addPlayer() {
+    let player = this.physics.add.sprite(135, 135, 'cat');
+    player.setCollideWorldBounds(true);
+
+    this.player = player;
+    this.player.setDepth(1);
+
+    this.player.anims.create({
+      key: 'left',
+      frames: this.anims.generateFrameNumbers('cat', { start: 0, end: 4 }),
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.player.anims.create({
+      key: 'turn',
+      frames: [{ key: 'cat', frame: 5 }],
+      frameRate: 20,
+    });
+
+    this.player.anims.create({
+      key: 'right',
+      frames: this.anims.generateFrameNumbers('cat', { start: 6, end: 9 }),
+      frameRate: 10,
+      repeat: -1,
+    });
+  }
+
+  update() {
+    let cursors = this.input.keyboard.createCursorKeys();
+    if (cursors.left.isDown) {
+      this.player.setVelocityX(-250);
+
+      this.player.anims.play('left', true);
+    } else if (cursors.right.isDown) {
+      this.player.setVelocityX(250);
+
+      this.player.anims.play('right', true);
+    } else if (cursors.down.isDown) {
+      this.player.setVelocityY(250);
+    } else if (cursors.up.isDown) {
+      this.player.setVelocityY(-250);
+    } else {
+      this.player.setVelocityX(0);
+      this.player.setVelocityY(0);
+
+      this.player.anims.play('turn');
+    }
+
+    //пока что убрала
+    // if (this.player.x >= 750 && this.player.y >= 550) {
+    //   this.scene.start('EndScreen');
+    // }
   }
 
   create() {
+    this.addPlayer();
+
     const TILESIZE = 80;
     const cellsWidth = Math.floor(this.game.config.height / TILESIZE - 1);
     const cellsHeight = Math.floor(this.game.config.width / TILESIZE - 1);
@@ -28,29 +91,34 @@ class GameScene extends Phaser.Scene {
     const height = TILESIZE * mazeCells.length;
 
     const tiles = this._cellsToTiles(mazeCells);
+
     this._renderLabyrinth(tiles, width, height, x, y);
   }
 
   _renderLabyrinth(tiles, width, height, x, y) {
-    const wallsMap = this.make.tilemap({
-      data: tiles,
-      tileWidth: 50,
-      tileHeight: 50,
-    });
-    const wallTiles = wallsMap.addTilesetImage('grass');
-    const wallsLayer = wallsMap.createLayer(0, wallTiles, x, y);
-    wallsLayer.setDisplaySize(width, height);
-
-    this._swapTiles(tiles);
-
     const floorMap = this.make.tilemap({
       data: tiles,
       tileWidth: 50,
       tileHeight: 50,
     });
-    const floorTiles = floorMap.addTilesetImage('ground');
+    const floorTiles = floorMap.addTilesetImage('grass');
     const floorLayer = floorMap.createLayer(0, floorTiles, x, y);
     floorLayer.setDisplaySize(width, height);
+
+    this._swapTiles(tiles);
+
+    const wallsMap = this.make.tilemap({
+      data: tiles,
+      tileWidth: 50,
+      tileHeight: 50,
+    });
+    const wallTiles = wallsMap.addTilesetImage('ground');
+    const wallsLayer = wallsMap.createLayer(0, wallTiles, x, y);
+    wallsLayer.setDisplaySize(width, height);
+
+    //Добавляем коллайдер между стенами лабиринта и игроком
+    wallsLayer.setCollisionBetween(1, 255);
+    this.physics.add.collider(this.player, wallsLayer);
   }
 
   _cellsToTiles(cells) {
