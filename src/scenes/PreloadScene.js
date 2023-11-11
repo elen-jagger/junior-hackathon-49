@@ -1,17 +1,17 @@
+import Phaser from 'phaser';
 
 class PreloadScene extends Phaser.Scene {
-    constructor() {
-        super('Preload');
-    }
-    preload() {
-        console.log('PreloadScene.preload')
-    }
+  constructor() {
+    super('Preload');
+  }
+  preload() {
+    console.log('PreloadScene.preload');
+  }
 
-    create() {
-        console.log('PreloadScene.create')
-        this.scene.start('Start');
-    }
+  create() {
+    console.log('PreloadScene.create');
+    this.scene.start('Start');
+  }
 }
-
 
 export default PreloadScene;
