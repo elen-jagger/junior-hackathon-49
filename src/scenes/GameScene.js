@@ -11,14 +11,14 @@ class GameScene extends Phaser.Scene {
     this.load.image('ground', 'src/assets/textures/ground.png');
 
     this.load.spritesheet('cat', 'assets/cat.png', {
-      frameWidth: 77,
-      frameHeight: 60,
+      frameWidth: 29.2,
+      frameHeight: 23,
     });
   }
 
   //TODO по-хорошему надо перенести в отдельный класс, наследующий от Phaser.Physics.Arcade.Sprite
   addPlayer() {
-    let player = this.physics.add.sprite(50, 50, 'cat');
+    let player = this.physics.add.sprite(135, 135, 'cat');
     player.setCollideWorldBounds(true);
 
     this.player = player;
@@ -39,7 +39,7 @@ class GameScene extends Phaser.Scene {
 
     this.player.anims.create({
       key: 'right',
-      frames: this.anims.generateFrameNumbers('cat', { start: 6, end: 10 }),
+      frames: this.anims.generateFrameNumbers('cat', { start: 6, end: 9 }),
       frameRate: 10,
       repeat: -1,
     });
@@ -94,28 +94,28 @@ class GameScene extends Phaser.Scene {
   }
 
   _renderLabyrinth(tiles, width, height, x, y) {
-    const wallsMap = this.make.tilemap({
-      data: tiles,
-      tileWidth: 50,
-      tileHeight: 50,
-    });
-    const wallTiles = wallsMap.addTilesetImage('grass');
-    const wallsLayer = wallsMap.createLayer(0, wallTiles, x, y);
-    wallsLayer.setDisplaySize(width, height);
-
-    this._swapTiles(tiles);
-
     const floorMap = this.make.tilemap({
       data: tiles,
       tileWidth: 50,
       tileHeight: 50,
     });
-    const floorTiles = floorMap.addTilesetImage('ground');
+    const floorTiles = floorMap.addTilesetImage('grass');
     const floorLayer = floorMap.createLayer(0, floorTiles, x, y);
     floorLayer.setDisplaySize(width, height);
 
+    this._swapTiles(tiles);
+
+    const wallsMap = this.make.tilemap({
+      data: tiles,
+      tileWidth: 50,
+      tileHeight: 50,
+    });
+    const wallTiles = wallsMap.addTilesetImage('ground');
+    const wallsLayer = wallsMap.createLayer(0, wallTiles, x, y);
+    wallsLayer.setDisplaySize(width, height);
+
     //Добавляем коллайдер между стенами лабиринта и игроком
-    wallsLayer.setCollisionBetween(0, 255); //посмотреть, что должно быть в аргументах, тк поставила числа наугад
+    wallsLayer.setCollisionBetween(1, 255);
     this.physics.add.collider(this.player, wallsLayer);
   }
 
