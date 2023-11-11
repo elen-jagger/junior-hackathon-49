@@ -1,15 +1,15 @@
 import Phaser from 'phaser';
-import HelloWorld from './hello-world';
+import Sprite from './sprite';
 
 const config = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
-  scene: HelloWorld,
+  scene: [Sprite],
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 100 },
+      gravity: { y: 0 },
     },
   },
 };
