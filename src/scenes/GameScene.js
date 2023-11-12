@@ -26,7 +26,7 @@ class GameScene extends Phaser.Scene {
   }
 
   addPlayer() {
-    const player = this.physics.add.sprite(135, 135, 'cat');
+    const player = this.physics.add.sprite(135, 200, 'cat');
     player.setCollideWorldBounds(true);
 
     this.player = player;
@@ -54,7 +54,7 @@ class GameScene extends Phaser.Scene {
   }
 
   addFinish() {
-    const finish = this.physics.add.image(1065, 585, 'kitten');
+    const finish = this.physics.add.image(1065, 800, 'kitten');
     this.finish = finish;
   }
 
@@ -83,13 +83,34 @@ class GameScene extends Phaser.Scene {
   create() {
     this.addPlayer();
 
+    // main menu buttons
+    const toStartBtn = this.add.text(100, 70, 'Go to start', {
+      fontFamily: 'Roboto',
+      fontSize: '30px',
+      color: '#086764',
+    });
+    toStartBtn.setInteractive().on('pointerdown', () => {
+      this.player.setX(135);
+      this.player.setY(200);
+    });
+
+    const restartBtn = this.add.text(400, 70, 'New map', {
+      fontFamily: 'Roboto',
+      fontSize: '30px',
+      color: '#086764',
+    });
+    restartBtn.setInteractive().on('pointerdown', () => {
+      this.scene.start('Game');
+    });
+
+    // labyrinth
     const TILESIZE = 80;
     const cellsWidth = Math.floor(this.game.config.height / TILESIZE - 1);
     const cellsHeight = Math.floor(this.game.config.width / TILESIZE - 1);
     const columns = cellsWidth - 1;
     const rows = cellsHeight - 1;
     const x = this.game.config.width - TILESIZE * cellsHeight;
-    const y = this.game.config.height - TILESIZE * cellsWidth;
+    const y = this.game.config.height - TILESIZE * cellsWidth + 40;
 
     const mazeCells = generateMaze(rows, columns);
 
