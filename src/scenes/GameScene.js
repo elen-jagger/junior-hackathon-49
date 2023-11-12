@@ -1,8 +1,12 @@
 import Phaser from 'phaser';
+import findShortestRoute from '../helpers/find-route';
+import { Pair } from '../helpers/pair';
 import generateMaze from '../helpers/generate-maze';
 import grass from '../assets/textures/grassTile.png';
+import route from '../assets/textures/grassTile2.png';
 import ground from '../assets/textures/groundTile.png';
 import kitten from '../assets/kitten.png';
+import { cellsToTiles, routeToTiles, swapTiles } from '../helpers/tiles';
 
 class GameScene extends Phaser.Scene {
   constructor() {
@@ -13,6 +17,7 @@ class GameScene extends Phaser.Scene {
     this.load.image('ground', ground);
     this.load.image('grass', grass);
     this.load.image('kitten', kitten);
+    this.load.image('route', route);
 
     this.load.spritesheet('cat', 'assets/cat.png', {
       frameWidth: 29.2,
@@ -20,7 +25,6 @@ class GameScene extends Phaser.Scene {
     });
   }
 
-  //TODO по-хорошему надо перенести в отдельный класс, наследующий от Phaser.Physics.Arcade.Sprite
   addPlayer() {
     const player = this.physics.add.sprite(135, 135, 'cat');
     player.setCollideWorldBounds(true);
@@ -74,10 +78,6 @@ class GameScene extends Phaser.Scene {
 
       this.player.anims.play('turn');
     }
-
-    // if (this.player.x >= 1040 && this.player.y >= 560) {
-    //   this.scene.start('EndScene');
-    // }
   }
 
   create() {
@@ -86,20 +86,29 @@ class GameScene extends Phaser.Scene {
     const TILESIZE = 80;
     const cellsWidth = Math.floor(this.game.config.height / TILESIZE - 1);
     const cellsHeight = Math.floor(this.game.config.width / TILESIZE - 1);
-    const rows = cellsWidth - 1;
-    const colums = cellsHeight - 1;
+    const columns = cellsWidth - 1;
+    const rows = cellsHeight - 1;
     const x = this.game.config.width - TILESIZE * cellsHeight;
     const y = this.game.config.height - TILESIZE * cellsWidth;
 
-    const mazeCells = generateMaze(colums, rows);
+    const mazeCells = generateMaze(rows, columns);
 
     const width = TILESIZE * mazeCells[0].length;
     const height = TILESIZE * mazeCells.length;
 
-    const tiles = this._cellsToTiles(mazeCells);
+    const tiles = cellsToTiles(mazeCells);
 
-    this._renderLabyrinth(tiles, width, height, x, y);
+    let src = new Pair(1, 1);
+    let dest = new Pair(columns * 2 - 1, rows * 2 - 1);
+
+    let path = findShortestRoute(cellsToTiles(mazeCells), src, dest);
+
+    const route = routeToTiles(path, mazeCells);
+
+    this._renderLabyrinth(tiles, width, height, x, y, route);
+
     this.addFinish();
+
     this.physics.add.collider(
       this.player,
       this.finish,
@@ -108,11 +117,10 @@ class GameScene extends Phaser.Scene {
   }
 
   finishGame() {
-    console.log(this);
     this.scene.start('EndScene');
   }
 
-  _renderLabyrinth(tiles, width, height, x, y) {
+  _renderLabyrinth(tiles, width, height, x, y, route) {
     const floorMap = this.make.tilemap({
       data: tiles,
       tileWidth: 50,
@@ -122,8 +130,7 @@ class GameScene extends Phaser.Scene {
     const floorLayer = floorMap.createLayer(0, floorTiles, x, y);
     floorLayer.setDisplaySize(width, height);
 
-    this._swapTiles(tiles);
-
+    swapTiles(tiles);
     const wallsMap = this.make.tilemap({
       data: tiles,
       tileWidth: 50,
@@ -133,39 +140,17 @@ class GameScene extends Phaser.Scene {
     const wallsLayer = wallsMap.createLayer(0, wallTiles, x, y);
     wallsLayer.setDisplaySize(width, height);
 
-    //Добавляем коллайдер между стенами лабиринта и игроком
+    const routeMap = this.make.tilemap({
+      data: route,
+      tileWidth: 50,
+      tileHeight: 50,
+    });
+    const routeTiles = routeMap.addTilesetImage('route');
+    const routeLayer = routeMap.createLayer(0, routeTiles, x, y);
+    routeLayer.setDisplaySize(width, height);
+
     wallsLayer.setCollisionBetween(1, 255);
     this.physics.add.collider(this.player, wallsLayer);
-  }
-
-  _cellsToTiles(cells) {
-    const tiles = new Array(cells.length * 2 + 1);
-
-    for (let i = 0; i < tiles.length; i++) {
-      tiles[i] = new Array(cells[0].length * 2 + 1).fill(0);
-    }
-
-    cells.map((row, i) => {
-      const y = (i + 1) * 2 - 1;
-      row.map((cell, c) => {
-        const x = (c + 1) * 2 - 1;
-        tiles[y][x] = 1; //клетка посередине
-        tiles[y - 1][x] = cell[0]; //верхняя клетка
-        tiles[y + 1][x] = cell[2]; //нижняя клетка
-        tiles[y][x - 1] = cell[3]; //клетка слева
-        tiles[y][x + 1] = cell[1]; //клетка справа
-      });
-    });
-
-    return tiles;
-  }
-
-  _swapTiles(tiles) {
-    tiles.map((row) => {
-      row.map((v, i, a) => {
-        a[i] = a[i] ? 0 : 1;
-      });
-    });
   }
 }
 
