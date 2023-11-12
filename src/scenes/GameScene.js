@@ -121,7 +121,7 @@ class GameScene extends Phaser.Scene {
       fontSize: '30px',
       color: '#086764',
     });
-    toStartBtn.setInteractive().on('pointerdown', () => {
+    toStartBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
       this.player.setX(this.initialPositionX);
       this.player.setY(this.initialPositionY);
     });
@@ -131,7 +131,7 @@ class GameScene extends Phaser.Scene {
       fontSize: '30px',
       color: '#086764',
     });
-    restartBtn.setInteractive().on('pointerdown', () => {
+    restartBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
       this.scene.start('Game');
     });
 
@@ -140,7 +140,7 @@ class GameScene extends Phaser.Scene {
       fontSize: '30px',
       color: '#086764',
     });
-    showRouteBtn.setInteractive().on('pointerdown', () => {
+    showRouteBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
       this.showRoute(route, width, height, x, y);
       setTimeout(() => {
         this.scene.start('Game');
