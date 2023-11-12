@@ -2,10 +2,14 @@ import Phaser from 'phaser';
 import findShortestRoute from '../helpers/find-route';
 import { Pair } from '../helpers/pair';
 import generateMaze from '../helpers/generate-maze';
-import grass from '../assets/textures/grassTile.png';
-import route from '../assets/textures/grassTile2.png';
+import grass from '../assets/grassPix.png';
+import route from '../assets/pathPix.png';
 import ground from '../assets/textures/groundTile.png';
 import kitten from '../assets/kitten.png';
+import back from '../assets/back.png';
+import newGame from '../assets/new.png';
+import tutorial from '../assets/tutorial.png';
+
 import { cellsToTiles, routeToTiles, swapTiles } from '../helpers/tiles';
 
 class GameScene extends Phaser.Scene {
@@ -20,6 +24,9 @@ class GameScene extends Phaser.Scene {
     this.load.image('grass', grass);
     this.load.image('kitten', kitten);
     this.load.image('route', route);
+    this.load.image('back', back);
+    this.load.image('new', newGame);
+    this.load.image('tutorial', tutorial);
 
     this.load.spritesheet('cat', 'assets/cat.png', {
       frameWidth: 29.2,
@@ -67,17 +74,17 @@ class GameScene extends Phaser.Scene {
   update() {
     let cursors = this.input.keyboard.createCursorKeys();
     if (cursors.left.isDown) {
-      this.player.setVelocityX(-250);
+      this.player.setVelocityX(-200);
 
       this.player.anims.play('left', true);
     } else if (cursors.right.isDown) {
-      this.player.setVelocityX(250);
+      this.player.setVelocityX(200);
 
       this.player.anims.play('right', true);
     } else if (cursors.down.isDown) {
-      this.player.setVelocityY(250);
+      this.player.setVelocityY(200);
     } else if (cursors.up.isDown) {
-      this.player.setVelocityY(-250);
+      this.player.setVelocityY(-200);
     } else {
       this.player.setVelocityX(0);
       this.player.setVelocityY(0);
@@ -116,30 +123,14 @@ class GameScene extends Phaser.Scene {
     this._renderLabyrinth(tiles, width, height, x, y);
 
     // main menu buttons
-    const toStartBtn = this.add.text(100, 65, 'Go to start', {
-      fontFamily: 'Roboto',
-      fontSize: '30px',
-      color: '#29c09f',
-    });
+    const toStartBtn = this.add.sprite(100, 65, 'back');
+
     toStartBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
       this.player.setX(this.initialPositionX);
       this.player.setY(this.initialPositionY);
     });
 
-    const restartBtn = this.add.text(400, 65, 'New map', {
-      fontFamily: 'Roboto',
-      fontSize: '30px',
-      color: '#29c09f',
-    });
-    restartBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
-      this.scene.start('Game');
-    });
-
-    const showRouteBtn = this.add.text(700, 50, 'Show route\nand restart', {
-      fontFamily: 'Roboto',
-      fontSize: '30px',
-      color: '#29c09f',
-    });
+    const showRouteBtn = this.add.sprite(600, 65, 'new');
     showRouteBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
       this.showRoute(route, width, height, x, y);
       setTimeout(() => {
@@ -147,12 +138,8 @@ class GameScene extends Phaser.Scene {
       }, 2000);
     });
 
-    const infoBtn = this.add.text(1000, 70, 'Info', {
-      fontFamily: 'Roboto',
-      fontSize: '30px',
-      color: '#29c09f',
-    });
-    infoBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
+    const exitBtn = this.add.sprite(1100, 70, 'tutorial');
+    exitBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
       this.scene.start('Start');
     });
 
