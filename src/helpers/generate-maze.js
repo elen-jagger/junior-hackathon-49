@@ -17,6 +17,7 @@ function generateMaze(x, y) {
     Math.floor(Math.random() * y),
     Math.floor(Math.random() * x),
   ];
+
   var path = [currentCell];
   unvis[currentCell[0]][currentCell[1]] = false;
   var visited = 1;
