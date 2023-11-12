@@ -119,7 +119,7 @@ class GameScene extends Phaser.Scene {
     const toStartBtn = this.add.text(100, 65, 'Go to start', {
       fontFamily: 'Roboto',
       fontSize: '30px',
-      color: '#086764',
+      color: '#29c09f',
     });
     toStartBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
       this.player.setX(this.initialPositionX);
@@ -129,7 +129,7 @@ class GameScene extends Phaser.Scene {
     const restartBtn = this.add.text(400, 65, 'New map', {
       fontFamily: 'Roboto',
       fontSize: '30px',
-      color: '#086764',
+      color: '#29c09f',
     });
     restartBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
       this.scene.start('Game');
@@ -138,13 +138,22 @@ class GameScene extends Phaser.Scene {
     const showRouteBtn = this.add.text(700, 50, 'Show route\nand restart', {
       fontFamily: 'Roboto',
       fontSize: '30px',
-      color: '#086764',
+      color: '#29c09f',
     });
     showRouteBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
       this.showRoute(route, width, height, x, y);
       setTimeout(() => {
         this.scene.start('Game');
       }, 2000);
+    });
+
+    const infoBtn = this.add.text(1000, 70, 'Info', {
+      fontFamily: 'Roboto',
+      fontSize: '30px',
+      color: '#29c09f',
+    });
+    infoBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
+      this.scene.start('Start');
     });
 
     this.addFinish();
