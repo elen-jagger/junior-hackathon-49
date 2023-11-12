@@ -9,9 +9,11 @@ class EndScene extends Phaser.Scene {
   }
 
   create() {
-    const popup = this.add.image(600, 350, 'popup');
-    popup.setInteractive();
-    popup.on('pointerdown', () => this.scene.start('Preload'));
+    this.popup = this.add.image(0, 0, 'popup').setOrigin(0);
+    this.popup.setScale(0.8);
+    this.popup.setX(this.game.config.width / 10);
+    this.popup.setInteractive();
+    this.popup.on('pointerdown', () => this.scene.start('Start'));
   }
 }
 

@@ -2,44 +2,56 @@ import Phaser from 'phaser';
 import findShortestRoute from '../helpers/find-route';
 import { Pair } from '../helpers/pair';
 import generateMaze from '../helpers/generate-maze';
-import grass from '../assets/grassPix.png';
-import route from '../assets/pathPix.png';
-import ground from '../assets/textures/groundTile.png';
-import kitten from '../assets/kitten.png';
-import back from '../assets/back.png';
-import newGame from '../assets/new.png';
-import tutorial from '../assets/tutorial.png';
-
 import { cellsToTiles, routeToTiles, swapTiles } from '../helpers/tiles';
+
+const TILE_DIM = 50;
 
 class GameScene extends Phaser.Scene {
   constructor() {
     super('Game');
-    this.initialPositionX = 135;
-    this.initialPositionY = 200;
   }
 
-  preload() {
-    this.load.image('ground', ground);
-    this.load.image('grass', grass);
-    this.load.image('kitten', kitten);
-    this.load.image('route', route);
-    this.load.image('back', back);
-    this.load.image('new', newGame);
-    this.load.image('tutorial', tutorial);
+  create() {
+    const TILESIZE = 80;
+    const cellsWidth = Math.floor(this.game.config.height / TILESIZE - 1);
+    const cellsHeight = Math.floor(this.game.config.width / TILESIZE - 1);
+    const columns = cellsWidth - 1;
+    const rows = cellsHeight - 1;
 
-    this.load.spritesheet('cat', 'assets/cat.png', {
-      frameWidth: 29.2,
-      frameHeight: 23,
-    });
-  }
+    const x = this.game.config.width - TILESIZE * cellsHeight;
+    const y = this.game.config.height - TILESIZE * cellsWidth + 40;
 
-  addPlayer() {
-    const player = this.physics.add.sprite(
-      this.initialPositionX,
-      this.initialPositionY,
-      'cat'
+    const mazeCells = generateMaze(rows, columns);
+
+    const width = TILESIZE * mazeCells[0].length;
+    const height = TILESIZE * mazeCells.length;
+
+    const tiles = cellsToTiles(mazeCells);
+
+    let src = new Pair(1, 1);
+    let dest = new Pair(columns * 2 - 1, rows * 2 - 1);
+
+    let path = findShortestRoute(cellsToTiles(mazeCells), src, dest);
+
+    this.route = routeToTiles(path, mazeCells);
+
+    this.addPlayer(x + TILE_DIM, y + TILE_DIM);
+    this.renderLabyrinth(tiles, width, height, x, y);
+
+    // main menu buttons
+    this.addButtons(width, height, x, y);
+
+    this.addFinish(x, y, width, height);
+
+    this.physics.add.collider(
+      this.player,
+      this.finish,
+      this.finishGame.bind(this)
     );
+  }
+
+  addPlayer(x, y) {
+    const player = this.physics.add.sprite(x, y, 'cat');
     player.setCollideWorldBounds(true);
 
     this.player = player;
@@ -66,8 +78,11 @@ class GameScene extends Phaser.Scene {
     });
   }
 
-  addFinish() {
-    const finish = this.physics.add.image(1065, 800, 'kitten');
+  addFinish(x, y, rows, columns) {
+    const xPos = rows - 60 + x;
+    const yPos = columns - 60 + y;
+
+    const finish = this.physics.add.image(xPos, yPos, 'kitten').setScale(0.8);
     this.finish = finish;
   }
 
@@ -93,46 +108,17 @@ class GameScene extends Phaser.Scene {
     }
   }
 
-  create() {
-    this.addPlayer();
-
-    // labyrinth
-    const TILESIZE = 80;
-    const cellsWidth = Math.floor(this.game.config.height / TILESIZE - 1);
-    const cellsHeight = Math.floor(this.game.config.width / TILESIZE - 1);
-    const columns = cellsWidth - 1;
-    const rows = cellsHeight - 1;
-
-    const x = this.game.config.width - TILESIZE * cellsHeight;
-    const y = this.game.config.height - TILESIZE * cellsWidth + 40;
-
-    const mazeCells = generateMaze(rows, columns);
-
-    const width = TILESIZE * mazeCells[0].length;
-    const height = TILESIZE * mazeCells.length;
-
-    const tiles = cellsToTiles(mazeCells);
-
-    let src = new Pair(1, 1);
-    let dest = new Pair(columns * 2 - 1, rows * 2 - 1);
-
-    let path = findShortestRoute(cellsToTiles(mazeCells), src, dest);
-
-    const route = routeToTiles(path, mazeCells);
-
-    this._renderLabyrinth(tiles, width, height, x, y);
-
-    // main menu buttons
+  addButtons(width, height, x, y) {
     const toStartBtn = this.add.sprite(100, 65, 'back');
 
     toStartBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
-      this.player.setX(this.initialPositionX);
-      this.player.setY(this.initialPositionY);
+      this.player.setX(x + TILE_DIM);
+      this.player.setY(y + TILE_DIM);
     });
 
     const showRouteBtn = this.add.sprite(600, 65, 'new');
     showRouteBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
-      this.showRoute(route, width, height, x, y);
+      this.showRoute(this.route, width, height, x, y);
       setTimeout(() => {
         this.scene.start('Game');
       }, 2000);
@@ -142,14 +128,6 @@ class GameScene extends Phaser.Scene {
     exitBtn.setInteractive({ cursor: 'pointer' }).on('pointerdown', () => {
       this.scene.start('Start');
     });
-
-    this.addFinish();
-
-    this.physics.add.collider(
-      this.player,
-      this.finish,
-      this.finishGame.bind(this)
-    );
   }
 
   showRoute(route, width, height, x, y) {
@@ -167,7 +145,7 @@ class GameScene extends Phaser.Scene {
     this.scene.start('EndScene');
   }
 
-  _renderLabyrinth(tiles, width, height, x, y) {
+  renderLabyrinth(tiles, width, height, x, y) {
     const floorMap = this.make.tilemap({
       data: tiles,
       tileWidth: 50,
