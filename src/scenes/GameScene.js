@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import generateMaze from '../helpers/generate-maze';
 import grass from '../assets/textures/grassTile.png';
 import ground from '../assets/textures/groundTile.png';
+import kitten from '../assets/kitten.png';
 
 class GameScene extends Phaser.Scene {
   constructor() {
@@ -11,6 +12,7 @@ class GameScene extends Phaser.Scene {
   preload() {
     this.load.image('ground', ground);
     this.load.image('grass', grass);
+    this.load.image('kitten', kitten);
 
     this.load.spritesheet('cat', 'assets/cat.png', {
       frameWidth: 29.2,
@@ -20,7 +22,7 @@ class GameScene extends Phaser.Scene {
 
   //TODO по-хорошему надо перенести в отдельный класс, наследующий от Phaser.Physics.Arcade.Sprite
   addPlayer() {
-    let player = this.physics.add.sprite(135, 135, 'cat');
+    const player = this.physics.add.sprite(135, 135, 'cat');
     player.setCollideWorldBounds(true);
 
     this.player = player;
@@ -47,6 +49,11 @@ class GameScene extends Phaser.Scene {
     });
   }
 
+  addFinish() {
+    const finish = this.physics.add.image(1065, 585, 'kitten');
+    this.finish = finish;
+  }
+
   update() {
     let cursors = this.input.keyboard.createCursorKeys();
     if (cursors.left.isDown) {
@@ -68,9 +75,8 @@ class GameScene extends Phaser.Scene {
       this.player.anims.play('turn');
     }
 
-    //пока что убрала
-    // if (this.player.x >= 750 && this.player.y >= 550) {
-    //   this.scene.start('EndScreen');
+    // if (this.player.x >= 1040 && this.player.y >= 560) {
+    //   this.scene.start('EndScene');
     // }
   }
 
@@ -93,6 +99,17 @@ class GameScene extends Phaser.Scene {
     const tiles = this._cellsToTiles(mazeCells);
 
     this._renderLabyrinth(tiles, width, height, x, y);
+    this.addFinish();
+    this.physics.add.collider(
+      this.player,
+      this.finish,
+      this.finishGame.bind(this)
+    );
+  }
+
+  finishGame() {
+    console.log(this);
+    this.scene.start('EndScene');
   }
 
   _renderLabyrinth(tiles, width, height, x, y) {
