@@ -9,7 +9,7 @@ import EndScene from './scenes/EndScene';
 const config = {
   type: Phaser.AUTO,
   width: 1200,
-  height: 720,
+  height: 900,
   backgroundColor: 'fddcbb',
   scene: [BootScene, PreloadScene, StartScene, GameScene, EndScene],
   physics: {
