@@ -22,7 +22,7 @@ class GameScene extends Phaser.Scene {
 
   //TODO по-хорошему надо перенести в отдельный класс, наследующий от Phaser.Physics.Arcade.Sprite
   addPlayer() {
-    let player = this.physics.add.sprite(135, 135, 'cat');
+    const player = this.physics.add.sprite(135, 135, 'cat');
     player.setCollideWorldBounds(true);
 
     this.player = player;
@@ -50,7 +50,8 @@ class GameScene extends Phaser.Scene {
   }
 
   addFinish() {
-    this.physics.add.image(1065, 585, 'kitten');
+    const finish = this.physics.add.image(1065, 585, 'kitten');
+    this.finish = finish;
   }
 
   update() {
@@ -74,9 +75,9 @@ class GameScene extends Phaser.Scene {
       this.player.anims.play('turn');
     }
 
-    if (this.player.x >= 1040 && this.player.y >= 560) {
-      this.scene.start('EndScene');
-    }
+    // if (this.player.x >= 1040 && this.player.y >= 560) {
+    //   this.scene.start('EndScene');
+    // }
   }
 
   create() {
@@ -99,6 +100,16 @@ class GameScene extends Phaser.Scene {
 
     this._renderLabyrinth(tiles, width, height, x, y);
     this.addFinish();
+    this.physics.add.collider(
+      this.player,
+      this.finish,
+      this.finishGame.bind(this)
+    );
+  }
+
+  finishGame() {
+    console.log(this);
+    this.scene.start('EndScene');
   }
 
   _renderLabyrinth(tiles, width, height, x, y) {
